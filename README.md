@@ -1,17 +1,32 @@
 <div align="center">
 <img width="30%" src="./logo/sparkline.png">
 </div>
+<br/>
 
 
-Clojure port for great common lisp library [cl-spark](https://github.com/tkych/cl-spark) what do "▁▂▅▃▂▇" sparklines.
-It is a clojure implementation of Zach Holman's [spark](https://github.com/holman/spark) and Gil Gonçalves' [vspark](https://github.com/LuRsT/vspark) with little extension.
+Clojure port of the great Common Lisp library [cl-spark](https://github.com/tkych/cl-spark), which generates sparklines like "▁▂▅▃▂▇".
+This is a Clojure implementation inspired by Zach Holman's [spark](https://github.com/holman/spark) and Gil Gonçalves' [vspark](https://github.com/LuRsT/vspark), with some additional features.
 
+## Features
 
+- Generate Unicode sparklines from numerical data
+- Render Vertical Spark and Watterfall for numerical or categorical outputs
+- Output customization
 
-
-## Examples
+## Installation
 
 ```clojure
+;; deps.edn
+{org.clojars.funkcjonariusze/sparkline {:mvn/version "1.0.0"}}
+;; leiningen
+[org.clojars.funkcjonariusze/sparkline "1.0.0"]
+```
+
+## Usage
+
+```clojure
+(require [sparkline.core :refer [spark vspark watterfall]])
+
 ;;; Spark
 (spark [1 1 2 3 5 8])  => "▁▁▂▃▅█"
 
@@ -45,10 +60,10 @@ It is a clojure implementation of Zach Holman's [spark](https://github.com/holma
 (def ternary [-1 0 1 -1 1 0 -1 1 -1])
 (spark ternary)              => "▁▄█▁█▄▁█▁"
 
-(binding [*ticks* [\_ \- \¯]]
+(binding [sparkline.core/*ticks* [\_ \- \¯]]
   (spark ternary))           => "_-¯_¯-_¯_"
 
-(binding [*ticks* [\▄ \⎯ \▀]]
+(binding [sparkline.core/*ticks* [\▄ \⎯ \▀]]
   (spark ternary))           => "▄⎯▀▄▀⎯▄▀▄"
 
 
@@ -158,9 +173,9 @@ off ▏
 ├-------┤
 -1.0  1.0
 "
-(println
-  (vspark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/sin (* x Math/PI 1/4)))
-   :size 7))
+(vspark [0 1 2 3 4 5 6 7 8]
+  :key (fn [x] (Math/sin (* x Math/PI 1/4)))
+  :size 7))
 =>
 "
 ███▏
@@ -173,6 +188,7 @@ off ▏
 ▉
 ██▉
 "
+
 ```
 
 # License
