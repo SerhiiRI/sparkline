@@ -7,7 +7,6 @@
 (declare spark)
 (declare vspark)
 
-
 ;;--------------------------------------------------------------------
 ;; Utils
 ;;--------------------------------------------------------------------
@@ -32,7 +31,6 @@
 (def unicode-arrows
   (map char (range 8592 8703)))
 
-
 ;;--------------------------------------------------------------------
 ;; Spark
 ;;--------------------------------------------------------------------
@@ -51,20 +49,19 @@
 
 
 (def ^:dynamic *ticks*
-  "
-  A simple-vector of characters for representation of sparklines.
-  Default is (▁ ▂ ▃ ▄ ▅ ▆ ▇ █).
+  "A simple-vector of characters for representation of sparklines.
+  Default is [▁ ▂ ▃ ▄ ▅ ▆ ▇ █].
 
   Examples:
 
-  (defvar ternary '(-1 0 1 -1 1 0 -1 1 -1))
+  (def ternary [-1 0 1 -1 1 0 -1 1 -1])
 
   (spark ternary)              => \"▁▄█▁█▄▁█▁\"
 
-  (let ((*ticks* (_ - ¯)))
+  (binding [*ticks* [\\_ \\- \\¯]]
     (spark ternary))           => \"_-¯_¯-_¯_\"
 
-  (let ((*ticks* (▄ ⎯ ▀)))
+  (binding [*ticks* [\\▄ \\⎯ \\▀]]
     (spark ternary))           => \"▄⎯▀▄▀⎯▄▀▄\"
 "
   (vector
@@ -76,34 +73,34 @@
 (defn spark
   "Generates a sparkline string for a list of real numbers.
 
-  Usage: SPARK <numbers> &key <min> <max> <key>
+  Usage: (spark <numbers> & {:keys [:min :max :key]})
 
-  * <numbers> ::= <list> of <float>
-  * <min>     ::= { <nil> | <float> }, default is nil
-  * <max>     ::= { <nil> | <float> }, default is nil
-  * <key>     ::= <function>
+  * <numbers> ::= <list> of <number>
+  * :min      ::= { nil | <number> }, default is nil
+  * :max      ::= { nil | <number> }, default is nil
+  * :key      ::= <function>
 
-  * <numbers> ~ data.
-  * <min>     ~ lower bound of output.
-                'nil means the minimum value of the data.
-  * <max>     ~ upper bound of output.
-                'nil means the maximum value of the data.
-  * <key>     ~ function for preparing data.
+  * <numbers> - data.
+  * :min     - lower bound of output.
+               'nil means the minimum value of the data.
+  * :max     - upper bound of output.
+               'nil means the maximum value of the data.
+  * :key     - function for preparing data.
 
   Examples:
 
-  (spark '(1 0 1 0))     => \"█▁█▁\"
-  (spark '(1 0 1 0 0.5)) => \"█▁█▁▄\"
-  (spark '(1 0 1 0 -1))  => \"█▄█▄▁\"
+  (spark [1 0 1 0])     => \"█▁█▁\"
+  (spark [1 0 1 0 0.5]) => \"█▁█▁▄\"
+  (spark [1 0 1 0 -1])  => \"█▄█▄▁\"
 
-  (spark '(0 30 55 80 33 150))                 => \"▁▂▃▅▂█\"
-  (spark '(0 30 55 80 33 150) :min -100)       => \"▃▄▅▆▄█\"
-  (spark '(0 30 55 80 33 150) :max 50)         => \"▁▅██▅█\"
-  (spark '(0 30 55 80 33 150) :min 30 :max 80) => \"▁▁▄█▁█\"
+  (spark [0 30 55 80 33 150])                 => \"▁▂▃▅▂█\"
+  (spark [0 30 55 80 33 150] :min -100)       => \"▃▄▅▆▄█\"
+  (spark [0 30 55 80 33 150] :max 50)         => \"▁▅██▅█\"
+  (spark [0 30 55 80 33 150] :min 30 :max 80) => \"▁▁▄█▁█\"
 
-  (spark '(0 1 2 3 4 5 6 7 8) :key (fn [x] (Math/sin (* x Math/PI 1/4))))
+  (spark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/sin (* x Math/PI 1/4))))
   => \"▄▆█▆▄▂▁▂▄\"
-  (spark '(0 1 2 3 4 5 6 7 8) :key (fn [x] (Math/cos (* x Math/PI 1/4))))
+  (spark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/cos (* x Math/PI 1/4))))
   => \"█▆▄▂▁▂▄▆█\"
 
   "
@@ -146,15 +143,19 @@
 
 (def ^:dynamic *vticks*
   "A simple-vector of characters for representation of vartical
-sparklines. Default is (▏ ▎ ▍ ▌ ▋ ▊ ▉ █).
+sparklines. Default is [▏ ▎ ▍ ▌ ▋ ▊ ▉ █].
 
 Examples:
 
   ;; Japan GDP growth rate, annal
   ;; see. http://data.worldbank.org/indicator/NY.GDP.MKTP.KD.ZG
   (def growth-rate
-   '((2007 2.192186) (2008 -1.041636) (2009 -5.5269766)
-     (2010 4.652112) (2011 -0.57031655) (2012 1.945)))
+    [[2007 2.192186]
+     [2008 -1.041636]
+     [2009 -5.5269766]
+     [2010 4.652112]
+     [2011 -0.57031655]
+     [2012 1.945]])
 
   (vspark growth-rate :key second :labels (map first growth-rate))
   =>
@@ -186,8 +187,7 @@ Examples:
   2010 +
   2011 -
   2012 +
-  \"
-"
+  \""
   (vector
     (char 9615) (char 9614) (char 9613)
     (char 9612) (char 9611) (char 9610)
@@ -197,32 +197,32 @@ Examples:
   "
   Generates a vartical sparkline string for a list of real numbers.
 
-  Usage: VSPARK <numbers> &key <min> <max> <key> <size>
-                             <labels> <title> <scale?> <newline?>
+  Usage: (vspark <numbers> & {:keys [:min :max :key :size :labels
+                                     :title :scale :newline]
 
-  * <numbers>  ::= <list> of <real-number>
-  * <min>      ::= { <null> | <real-number> }, default is NIL
-  * <max>      ::= { <null> | <real-number> }, default is NIL
-  * <key>      ::= <function>
-  * <size>     ::= <integer 1 *>, default is 50
-  * <labels>   ::= <list>
-  * <title>    ::= <object>, default is NIL
-  * <scale?>   ::= <generalized-boolean>, default is T
-  * <newline?> ::= <generalized-boolean>, default is T
+  * <numbers>  ::= <list> of <number>
+  * :min       ::= { nil | <number> }, default is 'nil
+  * :max       ::= { nil | <number> }, default is 'nil
+  * :key       ::= <function>
+  * :size      ::= <number>, must be 1+ default is 50
+  * :labels    ::= <list> of <string>
+  * :title     ::= <string>, default is NIL
+  * :scale?    ::= <boolean>, default is 'true
+  * :newline?  ::= <boolean>, default is 'true
 
-  * <numbers>  ~ data.
-  * <min>      ~ lower bound of output.
-                 NIL means the minimum value of the data.
-  * <max>      ~ upper bound of output.
-                 NIL means the maximum value of the data.
-  * <key>      ~ function for preparing data.
-  * <size>     ~ maximum number of output columns (contains label).
-  * <labels>   ~ labels for data.
-  * <title>    ~ If title is too big for size, it is not printed.
-  * <scale?>   ~ If T, output graph with scale for easy to see.
-                 If string length of min and max is too big for size,
-                 the scale is not printed.
-  * <newline?> ~ If T, output graph with newlines for easy to see.
+  * <numbers> - data.
+  * :min      - lower bound of output.
+                'nil means the minimum value of the data.
+  * :max      - upper bound of output.
+                'nil means the maximum value of the data.
+  * :key      - function for preparing data.
+  * :size     - maximum number of output columns (contains label).
+  * :labels   - labels for data.
+  * :title    - If title is too big for size, it is not printed.
+  * :scale?   - If 'true, output graph with scale for easy to see.
+                If string length of min and max is too big for size,
+                the scale is not printed.
+  * :newline? - If 'true, output graph with newlines for easy to see.
 
 
   Examples:
@@ -230,13 +230,13 @@ Examples:
   ;; Life expectancy by WHO region, 2011, bothsexes
   ;; see. http://apps.who.int/gho/data/view.main.690
   (def life-expectancies 
-    '((\"Africa\" 56)
-      (\"Americans\" 76)
-      (\"South-East Asia\" 67)
-      (\"Europe\" 76)
-      (\"Eastern Mediterranean\" 68)
-      (\"Western Pacific\" 76)
-      (\"Global\" 70)))
+     [[\"Africa\" 56]
+      [\"Americans\" 76]
+      [\"South-East Asia\" 67]
+      [\"Europe\" 76]
+      [\"Eastern Mediterranean\" 68]
+      [\"Western Pacific\" 76]
+      [\"Global\" 70]])
 
   (vspark life-expectancies :key second :scale? nil :newline? nil)
   =>
@@ -267,8 +267,8 @@ Examples:
                         50          65.0          80
   \"
 
-  (vspark '(0 1 2 3 4 5 6 7 8) :key (fn [x] (Math/sin (* x Math/PI 1/4)))
-                               :size 20)
+  (vspark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/sin (* x Math/PI 1/4)))
+                              :size 20)
   \"
   ██████████▏
   █████████████████▏
@@ -283,8 +283,8 @@ Examples:
   -1.0     0.0     1.0
   \"
 
-  (vspark '(0 1 2 3 4 5 6 7 8) :key (fn [x] (Math/sin (* x Math/PI 1/4)))
-                               :size 10)
+  (vspark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/sin (* x Math/PI 1/4)))
+                              :size 10)
   =>
   \"
   █████▏
@@ -300,8 +300,8 @@ Examples:
   -1.0   1.0
   \"
 
-  (vspark '(0 1 2 3 4 5 6 7 8) :key (fn [x] (Math/sin (* x Math/PI 1/4)))
-                               :size 1)
+  (vspark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/sin (* x Math/PI 1/4)))
+                              :size 1)
   =>
   \"
   ▌
@@ -313,8 +313,7 @@ Examples:
   ▏
   ▎
   ▌
-  \"
-  "
+  \""
   [numbers & {:keys [min max key size labels title scale? newline?]
               :or {size 50 scale? true newline? false}}]
   (assert (seqable? numbers))
@@ -437,30 +436,30 @@ Examples:
   "
   Generates vertical barchart for the number of elements used
 
-  Usage: WATTERFALL <data> &key <min> <max> <key> <size>
-                            <title> <scale?> <newline?>
+  Usage: (watterfall <data> & {keys [:min :max :key :size
+                                     :title :scale? :newline?]})
 
   * <data>     ::= <list> of <object>
-  * <min>      ::= { <null> | <real-number> }, default is NIL
-  * <max>      ::= { <null> | <real-number> }, default is NIL
-  * <key>      ::= <function>
-  * <size>     ::= <integer 1 *>, default is 50
-  * <title>    ::= <object>, default is NIL
-  * <scale?>   ::= <generalized-boolean>, default is T
-  * <newline?> ::= <generalized-boolean>, default is T
+  * :min       ::= { nil | <real-number> }, default is 'nil
+  * :max       ::= { nil | <real-number> }, default is 'nil
+  * :key       ::= <function>
+  * :size      ::= <number>, must be 1+, default is 50
+  * :title     ::= <object>, default is 'nil
+  * :scale?    ::= <generalized-boolean>, default is 'true
+  * :newline?  ::= <generalized-boolean>, default is 'true
 
-  * <data>     ~ data.
-  * <min>      ~ lower bound of output.
-                 NIL means the minimum value of the data.
-  * <max>      ~ upper bound of output.
-                 NIL means the maximum value of the data.
-  * <key>      ~ function for preparing data.
-  * <size>     ~ maximum number of output columns (contains label).
-  * <title>    ~ If title is too big for size, it is not printed.
-  * <scale?>   ~ If T, output graph with scale for easy to see.
+  * :data      - data.
+  * :min       - lower bound of output.
+                 'nil means the minimum value of the data.
+  * :max       - upper bound of output.
+                 'nil means the maximum value of the data.
+  * :key       - function for preparing data.
+  * :size      - maximum number of output columns (contains label).
+  * :title     - If title is too big for size, it is not printed.
+  * :scale?    - If 'true, output graph with scale for easy to see.
                  If string length of min and max is too big for size,
                  the scale is not printed.
-  * <newline?> ~ If T, output graph with newlines for easy to see.
+  * :newline?  - If 'true, output graph with newlines for easy to see.
 
 
   Examples:

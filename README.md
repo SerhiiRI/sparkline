@@ -1,16 +1,180 @@
-![build](https://github.com/SerhiiRI/sparkline/actions/workflows/clojure.yml/badge.svg)
+<div align="center">
+<img width="100%" src="./logo/sparkline.png">
+</div>
 
-## License
+Clojure port for great common lisp library [cl-spark](https://github.com/tkych/cl-spark) what do "▁▂▅▃▂▇" sparklines.
+It is a clojure implementation of Zach Holman's [spark](https://github.com/holman/spark) and Gil Gonçalves' [vspark](https://github.com/LuRsT/vspark) with little extension.
 
-Copyright © 2023 Serhii Riznychuk
 
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
+---
 
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+## Examples
+
+```clojure
+;;; Spark
+
+(spark [1 1 2 3 5 8])  => "▁▁▂▃▅█"
+
+;; float, minus
+(spark [1 0 1 0])    => "█▁█▁"
+(spark [1 0 1 0 0.5]) => "█▁█▁▄"
+(spark [1 0 1 0 -1]) => "█▄█▄▁"
+
+;; min, max
+(spark [0 30 55 80 33 150])                 => "▁▂▃▅▂█"
+(spark [0 30 55 80 33 150] :min -100)       => "▃▄▅▆▄█"
+(spark [0 30 55 80 33 150] :max 50)         => "▁▅██▅█"
+(spark [0 30 55 80 33 150] :min 30 :max 80) => "▁▁▄█▁█"
+
+;; key
+(spark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/sin (* x Math/PI 1/4))))
+=> "▄▆█▆▄▂▁▂▄"
+(spark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/cos (* x Math/PI 1/4))))
+=> "█▆▄▂▁▂▄▆█"
+
+;; in function
+(defn look-bits [n]
+  (spark (mapv (comp Integer/parseInt str) (Integer/toString n 2))))
+
+(look-bits 42) => "█▁█▁█▁"
+(look-bits 43) => "█▁█▁██"
+(look-bits 44) => "█▁██▁▁"
+(look-bits 45) => "█▁██▁█"
+
+;; *ticks*
+(def ternary [-1 0 1 -1 1 0 -1 1 -1])
+(spark ternary)              => "▁▄█▁█▄▁█▁"
+
+(binding [*ticks* [\_ \- \¯]]
+  (spark ternary))           => "_-¯_¯-_¯_"
+
+(binding [*ticks* [\▄ \⎯ \▀]]
+  (spark ternary))           => "▄⎯▀▄▀⎯▄▀▄"
+
+
+;;; Vspark
+
+;; Life expectancy by WHO region, 2011, bothsexes
+;; see. http://apps.who.int/gho/data/view.main.690
+(def life-expectancies
+  [["Africa" 56]
+   ["Americans" 76]
+   ["South-East Asia" 67]
+   ["Europe" 76]
+   ["Eastern Mediterranean" 68]
+   ["Western Pacific" 76]
+   ["Global" 70]])
+
+(vspark life-expectancies :key second)
+=>
+"
+▏
+█████████████████████████████████████████████████
+██████████████████████████▉
+█████████████████████████████████████████████████
+█████████████████████████████▍
+█████████████████████████████████████████████████
+██████████████████████████████████▍
+├-----------------------+-----------------------┤
+56                     66.0                    76
+"
+
+(vspark life-expectancies
+  :key second
+  :min 50 :max 80
+  :labels (map first life-expectancies)
+  :title "Life Expectancy")
+=>
+"
+                 Life Expectancy                                
+               Africa █████▋
+            Americans ████████████████████████▎
+      South-East Asia ███████████████▉
+               Europe ████████████████████████▎
+Eastern Mediterranean ████████████████▊
+      Western Pacific ████████████████████████▎
+               Global ██████████████████▋
+                      ├-------------+------------┤
+                      50          65.0          80
+"
+
+;; labels, size
+(vspark [1 0 0.5] :labels ["on" "off" "unknown"] :size 1)
+=>
+"
+     on █
+    off ▏
+unknown ▌
+"
+
+(vspark [1 0 0.5] :labels ["on" "off"] :size 1)
+=>
+"
+ on █
+off ▏
+    ▌
+"
+
+(vspark [1 0] :labels ["on" "off" "unknown"] :size 1)
+=>
+"
+ on █
+off ▏
+"
+
+;; auto-scale
+(vspark [0 1 2 3 4 5 6 7 8]
+  :key (fn [x] (Math/sin (* x Math/PI 1/4)))
+  :size 20)
+=>
+"
+█████████▌
+████████████████▎
+███████████████████
+████████████████▎
+█████████▌
+██▊
+▏
+██▊
+█████████▌
+├--------+--------┤
+-1.0     0.0    1.0
+"
+
+(vspark [0 1 2 3 4 5 6 7 8]
+  :key (fn [x] (Math/sin (* x Math/PI 1/4)))
+  :size 10)
+=>
+"
+████▌
+███████▋
+█████████
+███████▋
+████▌
+█▍
+▏
+█▍
+████▌
+├-------┤
+-1.0  1.0
+"
+(println
+  (vspark [0 1 2 3 4 5 6 7 8] :key (fn [x] (Math/sin (* x Math/PI 1/4)))
+   :size 7))
+=>
+"
+███▏
+█████▏
+██████
+█████▏
+███▏
+▉
+▏
+▉
+██▉
+"
+```
+
+# License
+
+This project is licensed under the Eclipse Public License (EPL) v2.
