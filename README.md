@@ -10,7 +10,7 @@ This is a Clojure implementation inspired by Zach Holman's [spark](https://githu
 ## Features
 
 - Generate Unicode sparklines from numerical data
-- Render Vertical Spark and Watterfall for numerical or categorical outputs
+- Render Vertical Spark and Waterfall for numerical or categorical outputs
 - Output customization
 
 ## Installation
@@ -25,7 +25,7 @@ This is a Clojure implementation inspired by Zach Holman's [spark](https://githu
 ## Usage
 
 ```clojure
-(require [sparkline.core :refer [spark vspark watterfall]])
+(require [sparkline.core :refer [spark vspark waterfall]])
 
 ;;; Spark
 (spark [1 1 2 3 5 8])  => "▁▁▂▃▅█"
@@ -189,9 +189,9 @@ off ▏
 ██▉
 "
 
-;; Watterfall
+;; Waterfall
 
-(watterfall
+(waterfall
   (seq "ababvbvbbababbvbbhhhdhhhbaeeidddd")
   :size 18
   :title "Char usage rate")

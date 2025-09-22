@@ -344,8 +344,8 @@ Eastern Mediterranean ████████████████▊
 
 ;;====================================================================
 
-(deftest watterfall-various
-  (is (= (watterfall
+(deftest waterfall-various
+  (is (= (waterfall
            (seq "ababvbvbbababbvbbhhhdhhhbaeeidddd")
            :size 18
            :title "Char usage rate")
@@ -359,7 +359,7 @@ e █▋
 i ▏
   ├-------+------┤
   1     6.0     11"))
-  (is (= (watterfall
+  (is (= (waterfall
            (seq "ababvbvbbababbvbbhhhdhhhbaeeidddd")
            :size 1
            :title "Char usage rate")
@@ -371,7 +371,7 @@ v ▎
 e ▏
 i ▏"))
   (is
-    (= (watterfall
+    (= (waterfall
          (mapcat
            (fn [[country n]] (repeat n country))
            life-expectancies)

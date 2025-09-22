@@ -429,14 +429,14 @@ Examples:
 
 
 ;;--------------------------------------------------------------------
-;; watterfall (vspark)
+;; waterfall (vspark)
 ;;--------------------------------------------------------------------
 
-(defn watterfall
+(defn waterfall
   "
   Generates vertical barchart for the number of elements used
 
-  Usage: (watterfall <data> & {keys [:min :max :key :size
+  Usage: (waterfall <data> & {keys [:min :max :key :size
                                      :title :scale? :newline?]})
 
   * <data>     ::= <list> of <object>
@@ -464,7 +464,7 @@ Examples:
 
   Examples:
 
-  (watterfall
+  (waterfall
     (seq \"ababvbvbbababbvbbhhhdhhhbaeeidddd\") :size 18
                                                 :title \"Char usage rate\")
   => 
