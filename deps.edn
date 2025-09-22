@@ -6,7 +6,7 @@
                       :patterns [".*-test$"]}
            :build
            {:deps {io.github.clojure/tools.build {:mvn/version "0.10.10"}}
-            :ns-default commando.build
+            :ns-default sparkline.build
             :paths ["src"]}
            :deploy
            {:exec-args {:artifact "target/sparkline.jar"

@@ -101,24 +101,24 @@ This is a Clojure implementation inspired by Zach Holman's [spark](https://githu
   :title "Life Expectancy")
 =>
 "
-                 Life Expectancy                                
-               Africa █████▋
-            Americans ████████████████████████▎
-      South-East Asia ███████████████▉
-               Europe ████████████████████████▎
+				 Life Expectancy
+			   Africa █████▋
+			Americans ████████████████████████▎
+	  South-East Asia ███████████████▉
+			   Europe ████████████████████████▎
 Eastern Mediterranean ████████████████▊
-      Western Pacific ████████████████████████▎
-               Global ██████████████████▋
-                      ├-------------+------------┤
-                      50          65.0          80
+	  Western Pacific ████████████████████████▎
+			   Global ██████████████████▋
+					  ├-------------+------------┤
+					  50          65.0          80
 "
 
 ;; labels, size
 (vspark [1 0 0.5] :labels ["on" "off" "unknown"] :size 1)
 =>
 "
-     on █
-    off ▏
+	 on █
+	off ▏
 unknown ▌
 "
 
@@ -127,7 +127,7 @@ unknown ▌
 "
  on █
 off ▏
-    ▌
+	▌
 "
 
 (vspark [1 0] :labels ["on" "off" "unknown"] :size 1)
@@ -189,6 +189,25 @@ off ▏
 ██▉
 "
 
+;; Watterfall
+
+(watterfall
+  (seq "ababvbvbbababbvbbhhhdhhhbaeeidddd")
+  :size 18
+  :title "Char usage rate")
+=>
+"
+ Char usage rate
+b ████████████████
+h ████████▏
+d ██████▍
+a ██████▍
+v ███▎
+e █▋
+i ▏
+  ├-------+------┤
+  1     6.0     11
+"
 ```
 
 # License
