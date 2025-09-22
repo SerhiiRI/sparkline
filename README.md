@@ -1,18 +1,18 @@
 <div align="center">
-<img width="100%" src="./logo/sparkline.png">
+<img width="30%" src="./logo/sparkline.png">
 </div>
+
 
 Clojure port for great common lisp library [cl-spark](https://github.com/tkych/cl-spark) what do "▁▂▅▃▂▇" sparklines.
 It is a clojure implementation of Zach Holman's [spark](https://github.com/holman/spark) and Gil Gonçalves' [vspark](https://github.com/LuRsT/vspark) with little extension.
 
 
----
+
 
 ## Examples
 
 ```clojure
 ;;; Spark
-
 (spark [1 1 2 3 5 8])  => "▁▁▂▃▅█"
 
 ;; float, minus
